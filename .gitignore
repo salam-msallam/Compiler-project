@@ -4,3 +4,5 @@ target/
 .idea/
 *.iml
 .vscode/
+
+src/main/antlr4/.antlr/
