@@ -1,0 +1,29 @@
+# One expression per line. Format:  <attribute-name> | <value>
+# Every line here must parse WITHOUT errors.
+# Use these to unit-test the Thymeleaf lexer/parser alone.
+th:text | ${product.name}
+th:text | ${product.price}
+th:text | ${p.name + ' - ' + p.price}
+th:text | #{home.title}
+th:text | |Hello ${user.name}!|
+th:text | *{name}
+th:utext | ${product.details}
+th:if | ${products != null and products.size() > 0}
+th:unless | ${#lists.isEmpty(products)}
+th:href | @{/products}
+th:href | @{/product/{id}(id=${p.id})}
+th:href | @{/search(q=${query},page=1)}
+th:src | ${p.image}
+th:src | @{/img/{name}(name=${p.image})}
+th:action | @{/add}
+th:object | ${product}
+th:field | *{price}
+th:value | ${product.name}
+th:class | ${p.price > 100} ? 'expensive' : 'cheap'
+th:classappend | ${stat.odd} ? 'odd'
+th:text | ${user?.name ?: 'Guest'}
+th:each | p : ${products}
+th:each | p, stat : ${products}
+th:with | total=${p.price * 2}, name=${p.name}
+th:replace | ~{fragments/header :: header}
+th:insert | fragments/footer :: footer
