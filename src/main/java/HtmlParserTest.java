@@ -1,5 +1,3 @@
-package com.compiler;
-
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -71,13 +69,13 @@ public class HtmlParserTest {
         try {
             ErrorCounter errorCounter = new ErrorCounter();
 
-            com.compiler.HtmlLexer lexer = new com.compiler.HtmlLexer(CharStreams.fromPath(file));
+            HtmlLexer lexer = new HtmlLexer(CharStreams.fromPath(file));
             lexer.removeErrorListeners();
             lexer.addErrorListener(errorCounter);
 
             CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-            com.compiler.HtmlParser parser = new com.compiler.HtmlParser(tokens);
+            HtmlParser parser = new HtmlParser(tokens);
             parser.removeErrorListeners();
             parser.addErrorListener(errorCounter);
 

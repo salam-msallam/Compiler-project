@@ -1,5 +1,4 @@
 lexer grammar HtmlLexer;
-@header { package com.compiler; }
 
 // =====================================
 // 1. HTML Comments
@@ -53,7 +52,7 @@ TAG_CLOSE_OPEN
 
 // Void tag names take precedence over generic NAME
 VOID_TAG_NAME
-    : [iI][nn][pP][uU][tT]
+    : [iI][nN][pP][uU][tT]
     | [bB][rR]
     | [iI][mM][gG]
     | [hH][rR]

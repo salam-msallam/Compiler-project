@@ -1,9 +1,5 @@
 parser grammar HtmlParser;
 
-@header {
-    package com.compiler;
-}
-
 options {
     tokenVocab = HtmlLexer;
 }

@@ -1,6 +1,3 @@
-
-package com.compiler;
-
 import org.antlr.v4.runtime.*;
 
 public class HtmlLexerTest {
@@ -19,7 +16,7 @@ public class HtmlLexerTest {
         </html>
         """;
 
-        com.compiler.HtmlLexer lexer = new com.compiler.HtmlLexer(
+        HtmlLexer lexer = new HtmlLexer(
                 CharStreams.fromString(html)
         );
 
