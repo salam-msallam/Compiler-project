@@ -1,0 +1,21 @@
+# One expression per line. Format:  <attribute-name> | <value>
+# must FAIL - every line below is a syntax error; the test passes when the parser reports an error.
+th:text | ${product.}
+th:text | ${product.name
+th:text | ${}
+th:text | ${a +}
+th:text | ${(a + b}
+th:text | ${a b}
+th:text | ${list[0}
+th:text | ${a ? b :}
+th:text | ${product.name}}
+th:text | 'unclosed
+th:text | #{ }
+th:if | ${a == }
+th:each | p ${products}
+th:each | : ${products}
+th:each | p, : ${products}
+th:with | total=
+th:href | @{/product/{id}(id=)}
+th:href | @{/x(id=${p.id}}
+th:replace | ~{fragments/header ::}
