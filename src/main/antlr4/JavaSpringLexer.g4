@@ -3,7 +3,7 @@ lexer grammar JavaSpringLexer;
 // ==========================================
 // Some Notes:
 //   1. First Match
-//   2. 
+//   2.
 // ==========================================
 
 // ==========================================
@@ -34,8 +34,6 @@ LONG        : 'long';
 BOOLEAN     : 'boolean';
 CHAR        : 'char';
 STRING_TYPE : 'String';
-// LIST        : 'List';
-// MAP         : 'Map';
 
 // ==========================================
 // 3. (Control Flow & Statements)
@@ -114,6 +112,22 @@ MUL_ASSIGN  : '*=';
 DIV_ASSIGN  : '/=';
 
 // ==========================================
+// 6.5 (Spring Boot Annotations & MVC Methods)
+// Placed ABOVE IDENTIFIER so First-Match rule prioritizes them
+// ==========================================
+CONTROLLER      : 'Controller';             // <--- ADDED
+GET_MAPPING     : 'GetMapping';             // <--- ADDED
+POST_MAPPING    : 'PostMapping';            // <--- ADDED
+REQUEST_MAPPING : 'RequestMapping';         // <--- ADDED
+REQUEST_PARAM   : 'RequestParam';           // <--- ADDED
+MODEL_ATTRIBUTE : 'ModelAttribute';         // <--- ADDED
+AUTOWIRED       : 'Autowired';              // <--- ADDED
+
+// Tokenized so the parser can build a dedicated AST node for model.addAttribute(...).
+// It is also accepted anywhere a normal method name is allowed (see the method-call expressions).
+ADD_ATTRIBUTE   : 'addAttribute';
+
+// ==========================================
 // 7. (Identifiers)
 // ==========================================
 IDENTIFIER  : Letter (Letter | Digit)*;
@@ -139,8 +153,8 @@ fragment HexDigit
     ;
 
 fragment Letter
-    : [a-zA-Z$_]
-    ;
+: [a-zA-Z$_]
+;
 
 fragment Digit
     : [0-9]

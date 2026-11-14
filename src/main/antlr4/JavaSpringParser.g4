@@ -2,14 +2,14 @@ parser grammar JavaSpringParser;
 
 // Integrate With Lexer
 options {
-    tokenVocab = JavaSpringLexer;
+    tokenVocab = JavaSpringLexer;             // <--- FIXED: Restored options block
 }
 
 // ==========================================
 // 1. (Compilation Unit)
 // ==========================================
 compilationUnit
-    : packageDeclaration? importDeclaration* typeDeclaration* EOF
+    : packageDeclaration? importDeclaration* typeDeclaration* EOF   // <--- FIXED: Restored * and removed -
     ;
 
 packageDeclaration
@@ -20,15 +20,16 @@ importDeclaration
     : IMPORT STATIC? qualifiedName (DOT MUL)? SEMI
     ;
 
+
 qualifiedName
-    : IDENTIFIER (DOT IDENTIFIER)*
+    : (IDENTIFIER | springAnnotationToken) (DOT (IDENTIFIER | springAnnotationToken))*
     ;
 
 // ==========================================
 // 2. (Classes & Interfaces)
 // ==========================================
 typeDeclaration
-    : annotation* modifier* (classDeclaration | interfaceDeclaration)
+    : annotation* modifier* (classDeclaration | interfaceDeclaration) // <--- FIXED: Restored * and removed -
     ;
 
 classDeclaration
@@ -40,12 +41,12 @@ interfaceDeclaration
     ;
 
 classBody
-    : LBRACE classBodyDeclaration* RBRACE
+    : LBRACE classBodyDeclaration* RBRACE   // <--- FIXED: Restored * and removed -
     ;
 
 classBodyDeclaration
     : SEMI                                              # EmptyDecl
-    | annotation* modifier* memberDeclaration           # MemberDecl
+    | annotation* modifier* memberDeclaration           # MemberDecl // <--- FIXED: Restored * and removed -
     ;
 
 memberDeclaration
@@ -68,7 +69,34 @@ modifier
 
 // Annotations Spring Boot
 annotation
-    : AT qualifiedName (LPAREN annotationElement? RPAREN)?
+    : AT springAnnotationName (LPAREN annotationElement? RPAREN)?   # SpringAnno  // <--- ADDED: Spring-specific branch
+    | AT qualifiedName (LPAREN annotationElement? RPAREN)?          # GeneralAnno // <--- ADDED: Label for other annotations
+    ;
+
+// <--- ADDED: Rule matching the 7 Spring Boot annotation tokens with individual AST labels
+springAnnotationName
+    : CONTROLLER        # ControllerAnno
+    | GET_MAPPING       # GetMappingAnno
+    | POST_MAPPING      # PostMappingAnno
+    | REQUEST_MAPPING   # RequestMappingAnno
+    | REQUEST_PARAM     # RequestParamAnno
+    | MODEL_ATTRIBUTE   # ModelAttributeAnno
+    | AUTOWIRED         # AutowiredAnno
+    ;
+
+// Unlabeled twin of springAnnotationName used exclusively inside qualifiedName.
+// If qualifiedName used springAnnotationName directly, every import statement
+// (e.g., "import org.springframework.stereotype.Controller;") would trigger
+// visitControllerAnno / enterControllerAnno AST callbacks—tricking the compiler
+// into treating an import line as an actual @Controller annotation.
+springAnnotationToken
+    : CONTROLLER
+    | GET_MAPPING
+    | POST_MAPPING
+    | REQUEST_MAPPING
+    | REQUEST_PARAM
+    | MODEL_ATTRIBUTE
+    | AUTOWIRED
     ;
 
 annotationElement
@@ -108,7 +136,7 @@ constructorDeclaration
     ;
 
 methodDeclaration
-    : (typeType | VOID) IDENTIFIER LPAREN formalParameterList? RPAREN (THROWS qualifiedNameList)? (block | SEMI)
+    : (typeType | VOID) (IDENTIFIER | ADD_ATTRIBUTE) LPAREN formalParameterList? RPAREN (THROWS qualifiedNameList)? (block | SEMI)
     ;
 
 formalParameterList
@@ -116,7 +144,7 @@ formalParameterList
     ;
 
 formalParameter
-    : annotation* FINAL? typeType IDENTIFIER
+    : annotation* FINAL? typeType IDENTIFIER            // <--- FIXED: Restored * and removed -
     ;
 
 qualifiedNameList
@@ -140,6 +168,7 @@ primitiveType
     | STRING_TYPE
     ;
 
+
 classOrInterfaceType
     : IDENTIFIER typeArguments? (DOT IDENTIFIER typeArguments?)*
     ;
@@ -156,7 +185,7 @@ typeList
 // 6. (Blocks & Statements)
 // ==========================================
 block
-    : LBRACE blockStatement* RBRACE
+    : LBRACE blockStatement* RBRACE                     // <--- FIXED: Restored * and removed -
     ;
 
 blockStatement
@@ -169,15 +198,17 @@ localVariableDeclaration
     ;
 
 statement
-    : block                                                                         # BlockStmt
-    | IF LPAREN expression RPAREN statement (ELSE statement)?                       # IfStmt
-    | FOR LPAREN forControl RPAREN statement                                        # ForStmt
-    | WHILE LPAREN expression RPAREN statement                                      # WhileStmt
-    | TRY block (CATCH LPAREN formalParameter RPAREN block)+                        # TryCatchStmt
-    | RETURN expression? SEMI                                                       # ReturnStmt
-    | THROW expression SEMI                                                         # ThrowStmt
-    | expression SEMI                                                               # ExprStmt
-    | SEMI                                                                          # EmptyStmt
+    : block                                                                                     # BlockStmt
+    | IF LPAREN expression RPAREN statement (ELSE statement)?                                   # IfStmt
+    | FOR LPAREN forControl RPAREN statement                                                    # ForStmt
+    | WHILE LPAREN expression RPAREN statement                                                  # WhileStmt
+    | TRY block (CATCH LPAREN formalParameter RPAREN block)+                                    # TryCatchStmt
+    | expression DOT ADD_ATTRIBUTE LPAREN expression COMMA expression RPAREN SEMI                # AddModelAttributeStmt // Any receiver, any key expression
+    | RETURN STRING_LITERAL SEMI                                                                # ReturnViewStmt        // <--- ADDED: Captures return "template_name";
+    | RETURN expression? SEMI                                                                   # ReturnStmt
+    | THROW expression SEMI                                                                     # ThrowStmt
+    | expression SEMI                                                                           # ExprStmt
+    | SEMI                                                                                      # EmptyStmt
     ;
 
 forControl
@@ -185,7 +216,7 @@ forControl
     | forInit? SEMI expression? SEMI expressionList?                                # TraditionalForCtrl
     ;
 
-// for-each: for (Product p : products)
+// لدعم حلقة for-each مثل: for (Product p : products)
 forEnhancedControl
     : typeType IDENTIFIER COLON expression
     ;
@@ -205,8 +236,8 @@ expressionList
 expression
     : primary                                                                       # PrimaryExpr
     | expression DOT IDENTIFIER                                                     # FieldAccessExpr
-    | expression DOT IDENTIFIER LPAREN expressionList? RPAREN                       # MethodCallExpr
-    | IDENTIFIER LPAREN expressionList? RPAREN                                      # DirectMethodCallExpr
+    | expression DOT (IDENTIFIER | ADD_ATTRIBUTE) LPAREN expressionList? RPAREN     # MethodCallExpr
+    | (IDENTIFIER | ADD_ATTRIBUTE) LPAREN expressionList? RPAREN                    # DirectMethodCallExpr
     | expression LBRACK expression RBRACK                                           # ArrayAccessExpr
     | NEW classOrInterfaceType LPAREN expressionList? RPAREN                        # ObjectCreationExpr
     | expression (INC | DEC)                                                        # PostfixExpr
