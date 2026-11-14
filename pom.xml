@@ -47,6 +47,14 @@
                     <release>21</release>
                 </configuration>
             </plugin>
+
+            <!-- Used by the documented demo command to place runtime jars in
+                 target/dependency without hard-coding a user's .m2 path. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.11.0</version>
+            </plugin>
         </plugins>
     </build>
 </project>
