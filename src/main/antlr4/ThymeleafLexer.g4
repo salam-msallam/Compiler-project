@@ -1,4 +1,7 @@
 lexer grammar ThymeleafLexer;
+@header {
+    package com.compiler;
+}
 
 // ============ Expression openers (each closes with RBRACE) ============
 DOLLAR_LBRACE : '${' ;   // variable expression   ${product.name}

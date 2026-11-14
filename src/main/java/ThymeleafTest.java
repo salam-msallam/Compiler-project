@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.*;
 import java.nio.file.*;
 import java.util.*;
 
+
 public class ThymeleafTest {
     /** Collects syntax errors instead of printing them to the console. */
     static class ErrorCollector extends BaseErrorListener {

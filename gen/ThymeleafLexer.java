@@ -1,4 +1,7 @@
-// Generated from C:/Users/Lenovo/vs code projects/coding/compiler/Compiler-project/src/main/antlr4/ThymeleafLexer.g4 by ANTLR 4.13.2
+// Generated from C:/Users/massa/Desktop/Compiler-project/src/main/antlr4/ThymeleafLexer.g4 by ANTLR 4.13.2
+
+    package com.compiler;
+
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

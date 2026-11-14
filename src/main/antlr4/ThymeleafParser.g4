@@ -1,4 +1,7 @@
 parser grammar ThymeleafParser;
+@header {
+    package com.compiler;
+}
 options { tokenVocab = ThymeleafLexer; }
 
 // =====================================================================
