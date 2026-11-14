@@ -1,0 +1,14 @@
+.product {
+    color: red;
+    background-color: #ffffff;
+    font-size: 20px;
+}
+
+#main {
+    width: 80%;
+    padding: 10px;
+}
+
+h1, h2 {
+    color: blue;
+}

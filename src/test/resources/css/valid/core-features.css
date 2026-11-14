@@ -1,0 +1,20 @@
+:root {
+    --main-color: #333abc;
+    --gap: 20px;
+}
+
+.card p,
+.card > p,
+h1 + p,
+h1 ~ p {
+    color: var(--main-color);
+    width: calc(100% - 20px);
+}
+
+input[type="text"],
+a[href^="https"],
+button:not(.disabled):hover {
+    margin: -10px 5%;
+    font-family: "Open Sans", sans-serif;
+    background-color: rgb(10, 20, 30) !important;
+}
