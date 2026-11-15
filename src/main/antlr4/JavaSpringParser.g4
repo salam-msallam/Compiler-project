@@ -2,14 +2,14 @@ parser grammar JavaSpringParser;
 
 // Integrate With Lexer
 options {
-    tokenVocab = JavaSpringLexer;             // <--- FIXED: Restored options block
+    tokenVocab = JavaSpringLexer;
 }
 
 // ==========================================
 // 1. (Compilation Unit)
 // ==========================================
 compilationUnit
-    : packageDeclaration? importDeclaration* typeDeclaration* EOF   // <--- FIXED: Restored * and removed -
+    : packageDeclaration? importDeclaration* typeDeclaration* EOF
     ;
 
 packageDeclaration
@@ -29,7 +29,7 @@ qualifiedName
 // 2. (Classes & Interfaces)
 // ==========================================
 typeDeclaration
-    : annotation* modifier* (classDeclaration | interfaceDeclaration) // <--- FIXED: Restored * and removed -
+    : annotation* modifier* (classDeclaration | interfaceDeclaration)
     ;
 
 classDeclaration
@@ -41,12 +41,12 @@ interfaceDeclaration
     ;
 
 classBody
-    : LBRACE classBodyDeclaration* RBRACE   // <--- FIXED: Restored * and removed -
+    : LBRACE classBodyDeclaration* RBRACE
     ;
 
 classBodyDeclaration
     : SEMI                                              # EmptyDecl
-    | annotation* modifier* memberDeclaration           # MemberDecl // <--- FIXED: Restored * and removed -
+    | annotation* modifier* memberDeclaration           # MemberDecl
     ;
 
 memberDeclaration
@@ -144,7 +144,7 @@ formalParameterList
     ;
 
 formalParameter
-    : annotation* FINAL? typeType IDENTIFIER            // <--- FIXED: Restored * and removed -
+    : annotation* FINAL? typeType IDENTIFIER
     ;
 
 qualifiedNameList
@@ -185,7 +185,7 @@ typeList
 // 6. (Blocks & Statements)
 // ==========================================
 block
-    : LBRACE blockStatement* RBRACE                     // <--- FIXED: Restored * and removed -
+    : LBRACE blockStatement* RBRACE
     ;
 
 blockStatement
@@ -203,7 +203,7 @@ statement
     | FOR LPAREN forControl RPAREN statement                                                    # ForStmt
     | WHILE LPAREN expression RPAREN statement                                                  # WhileStmt
     | TRY block (CATCH LPAREN formalParameter RPAREN block)+                                    # TryCatchStmt
-    | expression DOT ADD_ATTRIBUTE LPAREN expression COMMA expression RPAREN SEMI                # AddModelAttributeStmt // Any receiver, any key expression
+    | expression DOT ADD_ATTRIBUTE LPAREN expression COMMA expression RPAREN SEMI               # AddModelAttributeStmt // Any receiver, any key expression
     | RETURN STRING_LITERAL SEMI                                                                # ReturnViewStmt        // <--- ADDED: Captures return "template_name";
     | RETURN expression? SEMI                                                                   # ReturnStmt
     | THROW expression SEMI                                                                     # ThrowStmt
@@ -216,7 +216,7 @@ forControl
     | forInit? SEMI expression? SEMI expressionList?                                # TraditionalForCtrl
     ;
 
-// لدعم حلقة for-each مثل: for (Product p : products)
+// for-each: for (Product p : products)
 forEnhancedControl
     : typeType IDENTIFIER COLON expression
     ;
