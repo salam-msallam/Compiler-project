@@ -1,18 +1,10 @@
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-
+/** Command-line wrapper around the reusable CssAnalyzer. */
 public class CssParserDemo {
 
     private static final int SUCCESS = 0;
@@ -42,63 +34,22 @@ public class CssParserDemo {
             return USAGE_OR_IO_ERROR;
         }
 
-        List<String> errors = new ArrayList<>();
-
         try {
-            CharStream input = CharStreams.fromPath(cssFile, StandardCharsets.UTF_8);
+            CssAnalyzer.AnalysisResult result = CssAnalyzer.analyze(cssFile);
+            if (!result.success()) {
+                result.errors().forEach(error -> System.err.println(error.format()));
+                System.err.printf(
+                        Locale.ROOT,
+                        "CSS analysis failed with %d error(s).%n",
+                        result.errors().size());
+                return CSS_ERROR;
+            }
 
-            CssLexer lexer = new CssLexer(input);
-            lexer.removeErrorListeners();
-            lexer.addErrorListener(new CollectingErrorListener(cssFile, "lexer", errors));
-
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            CssParser parser = new CssParser(tokens);
-            parser.removeErrorListeners();
-            parser.addErrorListener(new CollectingErrorListener(cssFile, "parser", errors));
-            parser.stylesheet();
+            System.out.printf("CSS analysis succeeded: %s%n", cssFile);
+            return SUCCESS;
         } catch (IOException | SecurityException exception) {
             System.err.printf("Cannot read CSS file '%s': %s%n", cssFile, exception.getMessage());
             return USAGE_OR_IO_ERROR;
-        }
-
-        if (!errors.isEmpty()) {
-            errors.forEach(System.err::println);
-            System.err.printf("CSS analysis failed with %d error(s).%n", errors.size());
-            return CSS_ERROR;
-        }
-
-        System.out.printf("CSS analysis succeeded: %s%n", cssFile);
-        return SUCCESS;
-    }
-
-    private static final class CollectingErrorListener extends BaseErrorListener {
-
-        private final Path file;
-        private final String stage;
-        private final List<String> errors;
-
-        private CollectingErrorListener(Path file, String stage, List<String> errors) {
-            this.file = file;
-            this.stage = stage;
-            this.errors = errors;
-        }
-
-        @Override
-        public void syntaxError(
-                Recognizer<?, ?> recognizer,
-                Object offendingSymbol,
-                int line,
-                int charPositionInLine,
-                String message,
-                RecognitionException exception) {
-            // ANTLR columns are zero-based; report one-based columns to users.
-            errors.add(String.format(
-                    "%s:%d:%d: %s error: %s",
-                    file,
-                    line,
-                    charPositionInLine + 1,
-                    stage,
-                    message));
         }
     }
 }

@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <ul>
+        <li th:each="product : ${products}" th:text="${product.name}">Product</li>
+    </ul>
+    <a th:href="@{/product/{id}(id=${product.id})}">Details</a>
+</body>
+</html>

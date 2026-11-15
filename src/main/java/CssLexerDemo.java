@@ -1,5 +1,6 @@
 
 import java.nio.file.Path;
+import java.util.Locale;
 import org.antlr.v4.runtime.*;
 
 public class CssLexerDemo {
@@ -32,6 +33,7 @@ public class CssLexerDemo {
                     .getSymbolicName(token.getType());
 
             System.out.printf(
+                    Locale.ROOT,
                     "%-15s %-25s Line: %d%n",
                     type,
                     token.getText(),
